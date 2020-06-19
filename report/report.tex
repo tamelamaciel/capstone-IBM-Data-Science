@@ -1,19 +1,21 @@
 %
 % LaTeX report template 
 %
-\documentclass[a4paper,10pt]{article}
+\documentclass[a4paper,11pt]{article}
 \usepackage{graphicx}
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
-\usepackage{hyperref}
+\usepackage[draft]{hyperref}
+%\usepackage{float}
+
 %
 \begin{document}
 %
-   \title{Where to open an Indian restaurant in Ireland?}
+   \title{``Where to open an Indian restaurant in Ireland?" Capstone Project for IBM Data Science course}
 
    \author{Tamela Maciel}
           
-   \date{}
+   \date{June 2020}
 
    \maketitle
    
@@ -21,68 +23,103 @@
  
   %\newpage
 
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=11cm]{"images/Indian_Spices".jpg}
+      \caption{Credit: Joe mon bkk, Wikimedia Commons, CC-BY-SA-4.0}
+      \label{fig:spices}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%% 
 \section{Introduction and Business Problem}
-The introduction should state clearly why the study was started
-and give a relatively short and essential overview of the topic
-you are exploring. References to previous works can be made here.
- 
-The introduction should not contain the conclusions. 
-At the end of the introduction the outline of the paper may be described.
- 
- 
+%%%%%%%%%%%%%%%%%%%% 
+The UK is famous for its Indian restaurants, and perhaps no where more so than in Leicester, a small city in the heart of the country. Leicester has a large and vibrant Asian community and prides itself on the quality of its authentic curries. 
+
+Our client runs several successful Indian restaurants in Leicester and throughout the UK, and is now seeking opportunities to expand into the Republic of Ireland. Ireland's economy is rapidly growing, especially in the tourism and food industry, and our client sees a gap in the Irish restaurant market for high-quality Indian food. 
+
+The question is, where in Ireland should he open his new Indian restaurant? Where will the demand and relative scarcity of existing Indian restaurants be best served by a new venue?
+
+Our client has three criteria which he believes will lead to a successful new Indian restaurant:
+\begin{enumerate}
+	\item A city in Ireland that is similar or larger in relative size compared to Leicester.
+	\item A relative lack of Indian restaurants in that city.
+	\item A relatively high proportion of residents who are Asian or Irish Asian.
+	% consider also including property prices or business rates?
+\end{enumerate}
+
+Guided by these criteria, this report analyses a combination of census and venue location data in order to recommend the best location in Ireland for a new Indian restaurant. It clusters and profiles Irish cities based on types of restaurants, and uses this in combination with census data on population and demographics to identify the ideal new location for our client.
+
+%%%%%%%%%%%%%%%%%%%% 
 \section{Data}
-Our client runs several successful Indian restaurants in Leicester, UK, and seeks to reproduce the community and success in a new city or town in Ireland. In order to match the criteria of the client, we identify the best new location based on 1) the relative size of the city, 2) the existing profile of restaurants (Indian or other) in that city, and 3) the proportion of residents who are Asian or Irish Asian. The data for these criteria comes from a mixture of census data and Foursquare venue location data.
+%%%%%%%%%%%%%%%%%%%% 
+In order to analyse and profile Irish cities based on the client's criteria for a successful Indian restaurant, data is drawn from a mixture of UK and Irish census data as well as Foursquare venue location data.
 
-We use population statistics from the 2016 Irish census, scraped from the Wikipedia table: List of urban areas in the Republic of Ireland by population\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_Republic_of_Ireland_by_population}}, and the 2011 UK census, from the Wikipedia table: List of urban areas in the United Kingdom\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_United_Kingdom}}, in order to profile all Irish urban centres that are the same relative size of Leicester or bigger.
+We use population statistics from the \textbf{2016 Irish census}, scraped from the Wikipedia table: `List of urban areas in the Republic of Ireland by population'\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_Republic_of_Ireland_by_population} \label{footnote:irish pop}}, and the \textbf{2011 UK census}, from the Wikipedia table: `List of urban areas in the United Kingdom'\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_United_Kingdom}}, in order to profile all Irish urban centres that are the same relative size as Leicester or bigger.
 
-In order to capture the restaurant profile of a city, we need a large, up-to-date database of location-based venue data. In this analysis, we use the Foursquare API to return all restaurants within XXX metres of geographical centre of the top X Irish cities, as well as the city of Leicester, UK for comparison.
+According to the UK census, Leicester is the 13th largest built-up area in the UK, and so in order to match the client's criteria of a similarly large urban location, we will analyse and profile the 13 largest urban areas in Ireland (shown in Figure \ref{fig:irish pop table}) in order to determine the best new Indian restaurant location.
 
-For a new restaurant to be a success, it should locate itself in a place where there is a market gap, but also an existing base of future customers. We assume that areas with higher populations of south Asian immigration in Ireland will be more receptive to the authentic Indian cuisine that our client prides himself on. 
-
-Counties are ranked by the relative sizes of their Asian communities using the 2016 Irish census. Ethnicity by county is recorded on the Central Statistics Office webpage in table E8001: Irish Travellers Ethnicity and Religion\footnote{\url{https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?maintable=E8001&PLanguage=0}}. We exclude the `Asian or Asian Irish - Chinese' category, and select by `Asian or Asian Irish - any other Asian background'. Note that the census tables only summarises ethnicity to the county level, and not for individual cities or towns. However, given the counties are relatively small, this is suitable for the purposes of making a recommendation on new restaurant location.
-
-
-
-
-\section{Model?}
-
-Foursquare API - 'explore' returns more of the results expected (i.e. when 'search' was used for Leicester, Kayal wasn't on the list).
-Note a limit of 100 per search query - given depth of dublin restaurants, this means that not many indian places turn up.
-I could use the 'offset' function to step through the results.
-
-Otherwise, to make it more fair, I use 'explore' and return top 100 results sorted by popularity. so we're getting a truer picture of whether Indian restaurants are popular in the town.
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/Ireland population table".png}
+      \caption{Top 13 most populous urban areas in Ireland, from the 2016 Irish census. Credit: Wikipedia\textsuperscript{\ref{footnote:irish pop}}}
+      \label{fig:irish pop table}
+\end{figure}
 
 
-\section{Results}
-In this section you present your findings and results.
+In order to capture the restaurant profile of a city, we need a large, up-to-date database of location-based venue data. In this analysis, we use the \textbf{Foursquare API} to return up to 100 restaurants within a one kilometre radius of the geographical centre of the largest 13 Irish cities, as well as the city of Leicester for comparison. 
+
+We use the `explore' option for Foursquare queries rather than `search', and return results sorted by popularity, as this returns a better picture of the top restaurants in any given city. The `venue category' parameter distinguishes between types of cuisines and we use this in order to cluster and profile Irish cities by their restaurants.
+
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/foursquare dublin search".png}
+      \caption{Top restaurants in Dublin. Credit: Foursquare.com}
+      \label{fig:dublin foursquare}
+\end{figure}
+
+For a new restaurant to be a success, it should ideally locate itself in a place where there is a market gap, but also an existing base of future customers. In this analysis, we assume that areas with higher populations of Asian residents will be the most receptive to the authentic Indian cuisine that our client prides himself on. 
+
+The \textbf{2016 Irish census} includes ethnicity demographics grouped into nine categories. While ethnicity data is not available on the city level, ethnicity by county is recorded by the Central Statistics Office in Table E8001: Irish Travellers Ethnicity and Religion\footnote{\url{https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?maintable=E8001&PLanguage=0}\label{footnote:irish ethnicity}}. While Ireland has a predominately white population, the most common non-white ethnicity is Asian at 1.7\% as shown in Figure \ref{fig:irish ethnicity}. 
+
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/irish_ethnicity".png}
+      \caption{Percentage of Irish residents by ethnic or cultural background, from the 2016 Irish census. Data from the Central Statistics Office.\textsuperscript{\ref{footnote:irish ethnicity}}}
+      \label{fig:irish ethnicity}
+\end{figure}
+
+This county-level data is used to rank counties by their relative proportion of `Asian or Asian Irish - any other Asian background' communities, as shown in Figure \ref{fig:asian by county}.
+
+Given the fact that Irish counties are relatively small, this ethnicity data will be used to distinguish between and recommend cities that may otherwise have similar restaurant profiles.
+
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/counties_asian_ethnicity".png}
+      \caption{Number of Asian residents (non-Chinese) in Ireland by county, from the 2016 Irish census. Data from the Central Statistics Office.\textsuperscript{\ref{footnote:irish ethnicity}}}
+      \label{fig:asian by county}
+\end{figure}
 
 
-\newpage
-\section{Tables and figures}
-Figures demonstrate and prove conclusions. They should convince 
-the reader, preferably at first glance. Figures should be self-explanatory. 
-The legends should have a well-defined meaning. The lettering and the 
-thickness of lines and symbols should be large enough to remain recognizable 
-after printing.
-
-The figure captions should contain all the information needed to 
-understand the data presented and references to the text of the paper 
-should be minimized.
 
 
-%\begin{figure}[htb]
-%   \centering
-%   \includegraphics[width=8cm]{example.ps}
-%      \caption{Tables and figures are floating objects, \LaTeX\, will place them
-%      where it thinks it's best (whatever that means\ldots)
-%              }
-%         \label{FigVibStab}
-%\end{figure}
+
+%%%%%%%%%%%%%%%%%%%% 
+%\section{Methodology}
+%%%%%%%%%%%%%%%%%%%% 
+
+%%%%%%%%%%%%%%%%%%%% 
+%\section{Results}
+%%%%%%%%%%%%%%%%%%%% 
+
+%%%%%%%%%%%%%%%%%%%% 
+%\section{Discussion}
+%%%%%%%%%%%%%%%%%%%% 
 
 
-\section{Conclusion}
-Here you summarize the essential aspects and findings 
-of your work and analysis.
+
+
+%%%%%%%%%%%%%%%%%%%% 
+%\section{Conclusion}
+%%%%%%%%%%%%%%%%%%%% 
 
 
 \end{document}
