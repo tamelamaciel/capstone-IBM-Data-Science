@@ -53,21 +53,19 @@ Guided by these criteria, this report analyses a combination of census and venue
 %%%%%%%%%%%%%%%%%%%% 
 In order to analyse and profile Irish cities based on the client's criteria for a successful Indian restaurant, data is drawn from a mixture of UK and Irish census data as well as Foursquare venue location data.
 
-We use population statistics from the \textbf{2016 Irish census}, scraped from the Wikipedia table: `List of urban areas in the Republic of Ireland by population'\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_Republic_of_Ireland_by_population} \label{footnote:irish pop}}, and the \textbf{2011 UK census}, from the Wikipedia table: `List of urban areas in the United Kingdom'\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_United_Kingdom}}, in order to profile all Irish urban centres that are the same relative size as Leicester or bigger.
-
-According to the UK census, Leicester is the 13th largest built-up area in the UK, and so in order to match the client's criteria of a similarly large urban location, we will analyse and profile the 13 largest urban areas in Ireland (shown in Figure \ref{fig:irish pop table}) in order to determine the best new Indian restaurant location.
-
+\subsection{Urban population size}
 \begin{figure}[htb]
    \centering
    \includegraphics[width=\linewidth]{"images/Ireland population table".png}
       \caption{Top 13 most populous urban areas in Ireland, from the 2016 Irish census. Credit: Wikipedia\textsuperscript{\ref{footnote:irish pop}}}
       \label{fig:irish pop table}
 \end{figure}
+We use population statistics from the \textbf{2016 Irish census}, scraped from the Wikipedia table: `List of urban areas in the Republic of Ireland by population'\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_Republic_of_Ireland_by_population} \label{footnote:irish pop}}, and the \textbf{2011 UK census}, from the Wikipedia table: `List of urban areas in the United Kingdom'\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_United_Kingdom}}, in order to profile all Irish urban centres that are the same relative size as Leicester or bigger.
 
+According to the UK census, Leicester is the 13th largest built-up area in the UK, and so in order to match the client's criteria of a similarly large urban location, we will analyse and profile the 13 largest urban areas in Ireland (shown in Figure \ref{fig:irish pop table}) in order to determine the best new Indian restaurant location.
 
-In order to capture the restaurant profile of a city, we need a large, up-to-date database of location-based venue data. In this analysis, we use the \textbf{Foursquare API} to return up to 100 restaurants within a one kilometre radius of the geographical centre of the largest 13 Irish cities, as well as the city of Leicester for comparison. 
-
-We use the `explore' option for Foursquare queries rather than `search', and return results sorted by popularity, as this returns a better picture of the top restaurants in any given city. The `venue category' parameter distinguishes between types of cuisines and we use this in order to cluster and profile Irish cities by their restaurants.
+\subsection{Types of restaurants}
+In order to capture the restaurant profile of a city, we need a large, up-to-date database of location-based venue data. In this analysis, we use the \textbf{Foursquare API} to return up to 100 food venues within a 1.5 kilometre radius of the geographical centre of the largest 13 Irish cities.
 
 \begin{figure}[htb]
    \centering
@@ -76,9 +74,29 @@ We use the `explore' option for Foursquare queries rather than `search', and ret
       \label{fig:dublin foursquare}
 \end{figure}
 
+We use the `explore' option for Foursquare queries rather than `search', and return results sorted by popularity, as this returns a better picture of the top restaurants in any given city. We avoid biasing the results by time of day by setting the time and day parameters to `any'.
+
+%%% include table of foursquare parameter values
+
+Many of the food venues in a given city are cafes, pizza places, and fast food, and not direct competitors to restaurants. Hence we use the `venue category' parameter from Foursquare to filter out non-restaurants and distinguish between the type of cuisine served (e.g. Indian). We use this category parameter in order to cluster and profile Irish cities by their most common types of restaurants.
+
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/restaurants_by_city_barchart".png}
+      \caption{Number of restaurants within 1.5 kilometres of the centres of the 13 largest Irish cities. }
+      \label{fig:restaurants}
+\end{figure}
+
+After filtering out non-restaurants, our restaurant data consists of 252 of the most popular restaurants, spread over 13 Irish cities, as shown in Figure \ref{fig:restaurants}. The number of restaurants per city varies widely between 3 and 47. The cities with the lowest number of restaurants are Ennis (3 restaurants) and Bray (4 restaurants). After manually inspecting both cities via the Foursquare app, it's clear that these are in fact accurate numbers of restaurants. The vast majority of food venues in both small cities fall into the fast food or cafe category. This is true even if the radius is substantially increased.
+
+So it's not possible to simply gather more restaurants in order to more accurately profile the smaller cities. It's simply difficult to compare a city the size of Dublin with the much smaller urban areas of Ennis, Bray, etc. For most of the analysis that follows, we'll keep the city restaurant data as is. However, for the purposes of clustering, we'll want to have enough venues to build a profile of an area so we'll drop the cities that have less than 5 restaurants (e.g. Ennis and Bray).
+
+Of the 252 restaurants, 7.1\% are Indian restaurants. The purpose of this study to identify the regional variations in this percentage and where the market gaps are.
+
+\subsection{Asian residents}
 For a new restaurant to be a success, it should ideally locate itself in a place where there is a market gap, but also an existing base of future customers. In this analysis, we assume that areas with higher populations of Asian residents will be the most receptive to the authentic Indian cuisine that our client prides himself on. 
 
-The \textbf{2016 Irish census} includes ethnicity demographics grouped into nine categories. While ethnicity data is not available on the city level, ethnicity by county is recorded by the Central Statistics Office in Table E8001: Irish Travellers Ethnicity and Religion\footnote{\url{https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?maintable=E8001&PLanguage=0}\label{footnote:irish ethnicity}}. While Ireland has a predominately white population, the most common non-white ethnicity is Asian at 1.7\% as shown in Figure \ref{fig:irish ethnicity}. 
+The \textbf{2016 Irish census} includes ethnicity demographics grouped into nine categories. While ethnicity data is not available on the city level, ethnicity by the 31 administrative counties is recorded by the Central Statistics Office in Table E8001: Irish Travellers Ethnicity and Religion\footnote{\url{https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?maintable=E8001&PLanguage=0}\label{footnote:irish ethnicity}}. Ireland has a predominately white population, however the most common non-white ethnicity is Asian at 1.7\% as shown in Figure \ref{fig:irish ethnicity}. 
 
 \begin{figure}[htb]
    \centering
@@ -87,44 +105,91 @@ The \textbf{2016 Irish census} includes ethnicity demographics grouped into nine
       \label{fig:irish ethnicity}
 \end{figure}
 
-This county-level data is used to rank counties by their relative proportion of `Asian or Asian Irish - any other Asian background' communities, as shown in Figure \ref{fig:asian by county}.
+In order to determine percentage of Asian residents by county, we also download the overall population per administrative county from the 2016 Irish census, from Central Statistics Table E2004: Population Distribution and Movement\footnote{\url{https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?Maintable=E2004&Planguage=0}}.
 
-Given the fact that Irish counties are relatively small, this ethnicity data will be used to distinguish between and recommend cities that may otherwise have similar restaurant profiles.
+This county-level data is used to rank counties by their relative proportion of `Asian or Asian Irish - any other Asian background' communities, as shown in Figure \ref{fig:asian by county}.
 
 \begin{figure}[htb]
    \centering
-   \includegraphics[width=\linewidth]{"images/counties_asian_ethnicity".png}
-      \caption{Number of Asian residents (non-Chinese) in Ireland by county, from the 2016 Irish census. Data from the Central Statistics Office.\textsuperscript{\ref{footnote:irish ethnicity}}}
+   \includegraphics[width=\linewidth]{"images/all_counties_asian_percent_barchart".png}
+      \caption{Percentage of Asian residents (non-Chinese) in Ireland by county, from the 2016 Irish census. Data from the Central Statistics Office.\textsuperscript{\ref{footnote:irish ethnicity}}}
       \label{fig:asian by county}
 \end{figure}
 
-EXTRA DATA
+Given the fact that Irish counties are relatively small, this ethnicity data will be used to distinguish between and recommend cities that may otherwise have similar restaurant profiles. 
 
-Boundaries of the 31 adminstrative counties used in the 2016 Irish census can be downloaded from [data.gov.ie](https://data.gov.ie/dataset/administrative-areas-osi-national-statutory-boundaries-generalised-20m). Here we use the 20 metre resolution geojson file for county boundaries.
-
-
-The population per adminstrative county comes from the 2016 Irish census, specifically [Table E2004 on Population Distribution and Movement](https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?Maintable=E2004&Planguage=0)
-
-
-%%%%%%%%%%%%%%%%%%%% 
-%\section{Methodology}
-%%%%%%%%%%%%%%%%%%%% 
-
-%%%%%%%%%%%%%%%%%%%% 
-%\section{Results}
-%%%%%%%%%%%%%%%%%%%% 
-
-%%%%%%%%%%%%%%%%%%%% 
-%\section{Discussion}
-%%%%%%%%%%%%%%%%%%%% 
-
+In order to accurately link our 13 cities to the administrative county that they reside in, we also need the county boundaries as a geographic file. Boundaries of the 31 administrative counties used in the 2016 Irish census can be downloaded from data.gov.ie\footnote{\url{https://data.gov.ie/dataset/administrative-areas-osi-national-statutory-boundaries-generalised-20m}}. Here we use the 20 metre resolution geojson file for county boundaries, as shown in Figure \ref{fig:admin counties}.
+%
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/admin_county_bounds_swords".png}
+      \caption{The boundaries of the administrative counties used in the 2016 Irish census are shown in dark green, with the cities shown as blue circles. As an example, Swords lies in the geographic county of Dublin, but in the administrative county of Fingal County Council.}
+      \label{fig:admin counties}
+\end{figure}
+%   
 
 
 
 %%%%%%%%%%%%%%%%%%%% 
-%\section{Conclusion}
+\section{Methodology}
 %%%%%%%%%%%%%%%%%%%% 
 
+%%% add images and text
+
+%%%%%%%%%%%%%%%%%%%% 
+\section{Results}
+%%%%%%%%%%%%%%%%%%%% 
+
+The above map summarises the result of all our analysis. 
+It shows a choropleth of the administrative counties of Ireland, coloured by the percentage of Asian (non-Chinese) residents in that county. The highest percentages are around Dublin city, shown in dark red.
+It also shows the final 11 cities included for analysis (those with 5 or more top restaurants) as coloured circles, where the size of the circle indicates the percentage of Indian restaurants in that city, and the colour of the circle indicates which cluster the city belongs to, based on the types of restaurants that are most common.
+
+By hovering over each city, additional statistics are available about the cluster profile, the percentage of Asian residents and the percentage of Indian restaurants.
+
+The cluster profiles combined with knowledge of the proportion of Asian residents in each city allows us to clearly identify those with a lack of current Indian restaurants but a relatively high Asian population. 
+
+\textbf{These cities are our top three recommendations for locating a new Indian restaurant in Ireland:}
+
+\begin{itemize}
+	\item \textbf{Dublin}: 2.8\% Asian population, only 2 Indian restaurants out of 47 (4.3\%), and no Indian restaurants in its most common 5 restaurants
+	\item \textbf{Swords}: 3.2\% Asian population, only 1 Indian restaurant out of 9 (11.1\%), and no Indian restaurants in its most common 5 restaurants
+	\item \textbf{Cork}: 2.1\% Asian population, only 1 Indian restaurant out of 29 (3.4\%), and no Indian restaurants in its most common 5 restaurants
+\end{itemize}
+
+\textbf{In addition, there are two additional cities that have good potential and would be worth considering by the client as strong runners-up:}  
+
+\begin{itemize}
+	\item \textbf{Galway}: 2.5\% Asian population and only 3 Indian restaurants out of 39 (7.7\%). However, its 3rd most common restaurant is an Indian restaurant, unlike our top three cities.
+	\item \textbf{Limerick}: 1.8\% Asian population (which is low but not far off of Cork), only 1 Indian restaurant out of 25 (4\%), and no Indian restaurants in its most common 5 restaurants
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%% 
+\section{Discussion}
+%%%%%%%%%%%%%%%%%%%% 
+
+%%%More detail about what we have done, and potential pitfalls (range of restaurant data, low stats implying high percentage of Indians in the smaller cities), not a clear elbow for clusters.
+
+%%%discuss profiles of each cluster 
+
+The result of all of this analysis leads to three clear top recommendations for where to locate a new Indian restaurant: Dublin, Swords, and Cork. There were two strong runners-up: Galway and Limerick
+
+This recommendation should be viewed as the starting point for further investigation by the client.
+
+An additional key factor to investigate further is the price of commercial properties (either sale or lease). This may well differentiate our recommended cities and help the client decide, based on their budget. Dublin and Swords are well-known to have much more expensive property prices, compared to any where else in the the country. However, on the flip-side, Dublin and Swords have higher densities of potential customers and larger disposable incomes.
+
+Finally, once an ideal city is selected, further analysis must be done to select the ideal neighbourhood, and even street address, based on footfall, property prices, and demographics of the area. This is outside the scope of this work, but a similar approach can be applied to neighbourhoods just as easily as to cities.
+
+For a given neighbourhood, it would also be helpful to know if previous Indian restaurants have ever opened and then failed, and why. This data would require records of historic businesses, or strong local knowledge, and would be more difficult to extract, but could prove to be quite indicative of the best area (or not) to locate a new Indian restaurant in Ireland.
+
+%%%%%%%%%%%%%%%%%%%% 
+\section{Conclusion}
+%%%%%%%%%%%%%%%%%%%% 
+
+This study using a combination of demographic and venue location data in order to recommend where in Ireland to open a new Indian restaurant. Based on the client's criteria of what makes a successful restaurant, we maximised both population and proportion of Asian (non-Chinese) residents in each Irish city, in order to guarantee a large existing base of future customers, and we minimised the proportion of existing Indian restaurants, in order to identify a gap in the restaurant market.
+
+Using population and demographic data from the 2016 Irish census, we analysed and ranked the 13 largest Irish cities by percentage of Asian residents. Using restaurant location data from Foursquare for each city, we clustered and profiled each city based on their most common types of restaurants. \textbf{The combination of these two analyses led to three clear top recommendations for where to locate a new Indian restaurant: Dublin, Swords, and Cork.} There were two strong runners-up: Galway and Limerick.
+
+Our analysis and recommendations only include demographics and a profile of restaurants for each Irish city and should only be considered as a starting point for further investigation by the client. Property prices and neighbourhood-level demographics and restaurant profiles should also be included in a final decision of where to locate a new Indian restaurant in Ireland.
 
 \end{document}
 
