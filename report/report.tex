@@ -3,6 +3,7 @@
 %
 \documentclass[a4paper,11pt]{article}
 \usepackage{graphicx}
+\usepackage{booktabs}
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
 \usepackage[draft]{hyperref}
@@ -49,7 +50,7 @@ Our client has three criteria which he believes will lead to a successful new In
 Guided by these criteria, this report analyses a combination of census and venue location data in order to recommend the best location in Ireland for a new Indian restaurant. It clusters and profiles Irish cities based on types of restaurants, and uses this in combination with census data on population and demographics to identify the ideal new location for our client.
 
 %%%%%%%%%%%%%%%%%%%% 
-\section{Data}
+\section{Data - Acquisition and Cleaning}\label{sec: data}
 %%%%%%%%%%%%%%%%%%%% 
 In order to analyse and profile Irish cities based on the client's criteria for a successful Indian restaurant, data is drawn from a mixture of UK and Irish census data as well as Foursquare venue location data.
 
@@ -60,11 +61,21 @@ In order to analyse and profile Irish cities based on the client's criteria for 
       \caption{Top 13 most populous urban areas in Ireland, from the 2016 Irish census. Credit: Wikipedia\textsuperscript{\ref{footnote:irish pop}}}
       \label{fig:irish pop table}
 \end{figure}
-We use population statistics from the \textbf{2016 Irish census}, scraped from the Wikipedia table: `List of urban areas in the Republic of Ireland by population'\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_Republic_of_Ireland_by_population} \label{footnote:irish pop}}, and the \textbf{2011 UK census}, from the Wikipedia table: `List of urban areas in the United Kingdom'\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_United_Kingdom}}, in order to profile all Irish urban centres that are the same relative size as Leicester or bigger.
+We use population statistics from the \textbf{2016 Irish census}, scraped from the Wikipedia table: `List of urban areas in the Republic of Ireland by population'\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_Republic_of_Ireland_by_population} \label{footnote:irish pop}}, and the \textbf{2011 UK census}, from the Wikipedia table: `List of urban areas in the United Kingdom'\footnote{\url{https://en.wikipedia.org/wiki/List_of_urban_areas_in_the_United_Kingdom}}, in order to profile all Irish urban centres that are the same relative size as Leicester or bigger. The python package `BeautifulSoup' was used to scrap and filter this data.
 
 According to the UK census, Leicester is the 13th largest built-up area in the UK, and so in order to match the client's criteria of a similarly large urban location, we will analyse and profile the 13 largest urban areas in Ireland (shown in Figure \ref{fig:irish pop table}) in order to determine the best new Indian restaurant location.
 
-\subsection{Types of restaurants}
+%% include details about getting lat,long values from each city. Show map
+
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/all_cities_map-blue".png}
+      \caption{Locations of the top 13 most populous urban areas in Ireland, from the 2016 Irish census.}
+      \label{fig:map all cities}
+\end{figure}
+
+
+\subsection{Types of restaurants}\label{sec: restaurant data}
 In order to capture the restaurant profile of a city, we need a large, up-to-date database of location-based venue data. In this analysis, we use the \textbf{Foursquare API} to return up to 100 food venues within a 1.5 kilometre radius of the geographical centre of the largest 13 Irish cities.
 
 \begin{figure}[htb]
@@ -94,6 +105,7 @@ So it's not possible to simply gather more restaurants in order to more accurate
 Of the 252 restaurants, 7.1\% are Indian restaurants. The purpose of this study to identify the regional variations in this percentage and where the market gaps are.
 
 \subsection{Asian residents}
+
 For a new restaurant to be a success, it should ideally locate itself in a place where there is a market gap, but also an existing base of future customers. In this analysis, we assume that areas with higher populations of Asian residents will be the most receptive to the authentic Indian cuisine that our client prides himself on. 
 
 The \textbf{2016 Irish census} includes ethnicity demographics grouped into nine categories. While ethnicity data is not available on the city level, ethnicity by the 31 administrative counties is recorded by the Central Statistics Office in Table E8001: Irish Travellers Ethnicity and Religion\footnote{\url{https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?maintable=E8001&PLanguage=0}\label{footnote:irish ethnicity}}. Ireland has a predominately white population, however the most common non-white ethnicity is Asian at 1.7\% as shown in Figure \ref{fig:irish ethnicity}. 
@@ -107,16 +119,14 @@ The \textbf{2016 Irish census} includes ethnicity demographics grouped into nine
 
 In order to determine percentage of Asian residents by county, we also download the overall population per administrative county from the 2016 Irish census, from Central Statistics Table E2004: Population Distribution and Movement\footnote{\url{https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?Maintable=E2004&Planguage=0}}.
 
-This county-level data is used to rank counties by their relative proportion of `Asian or Asian Irish - any other Asian background' communities, as shown in Figure \ref{fig:asian by county}.
+This county-level data is used to rank counties by their relative proportion of `Asian or Asian Irish - any other Asian background' communities (see Figure \ref{fig: ethnicity choropleth} in the next section). Given the fact that Irish counties are relatively small, this ethnicity data will be used to distinguish between and recommend cities that may otherwise have similar restaurant profiles. 
 
-\begin{figure}[htb]
-   \centering
-   \includegraphics[width=\linewidth]{"images/all_counties_asian_percent_barchart".png}
-      \caption{Percentage of Asian residents (non-Chinese) in Ireland by county, from the 2016 Irish census. Data from the Central Statistics Office.\textsuperscript{\ref{footnote:irish ethnicity}}}
-      \label{fig:asian by county}
-\end{figure}
-
-Given the fact that Irish counties are relatively small, this ethnicity data will be used to distinguish between and recommend cities that may otherwise have similar restaurant profiles. 
+%\begin{figure}[htb]
+%   \centering
+%   \includegraphics[width=\linewidth]{"images/all_counties_asian_percent_barchart".png}
+%      \caption{Percentage of Asian residents (non-Chinese) in Ireland by county, from the 2016 Irish census. Data from the Central Statistics Office.\textsuperscript{\ref{footnote:irish ethnicity}}}
+%      \label{fig:asian by county}
+%\end{figure}
 
 In order to accurately link our 13 cities to the administrative county that they reside in, we also need the county boundaries as a geographic file. Boundaries of the 31 administrative counties used in the 2016 Irish census can be downloaded from data.gov.ie\footnote{\url{https://data.gov.ie/dataset/administrative-areas-osi-national-statutory-boundaries-generalised-20m}}. Here we use the 20 metre resolution geojson file for county boundaries, as shown in Figure \ref{fig:admin counties}.
 %
@@ -128,22 +138,133 @@ In order to accurately link our 13 cities to the administrative county that they
 \end{figure}
 %   
 
+%%%%%%%%%%%%%%%%%%%% 
+\section{Methodology - Data Analysis and Clustering}
+%%%%%%%%%%%%%%%%%%%% 
+% include data acquisition, cleaning and wrangling here or above?
+In this study we want to identify the best place in Ireland in which to open an Indian restaurant, by maximising the urban population, especially with regards to Asian residents, and minimising the existing number of Indian restaurants. Our analysis is limited to the Irish cities that have the same relative population as Leicester or larger, and to an area within 1.5 kilometres radius of each city centre.
 
+The first step was data acquisition and cleaning, as described in Section \ref{sec: data}. Using the most recent UK and Irish census data, the 13 largest Irish cities by population were selected for this study, in order to match the relative population of Leicester in UK. We then collected \textbf{Irish population and ethnicity data} from the 2016 Irish census, using the data portal on the Central Statistics Office webpage. Two tables on county population and ethnicity were combined and cleaned, and matched to the city locations using a geographic file of the boundaries of counties. We also collected \textbf{restaurant data (frequency, location, and type)} for each of the 13 Irish cities using the Foursquare API. All of this data was cleaned and wrangled into a final single dataset that includes both demographic and restaurant data. %ref figure from data section?
+
+The second step is exploratory data analysis, in which we analyse and visualise trends in both the demographic and restaurant raw data. This is described further in Section \ref{sec: EDA} below. This allows us to short-list the cities that are the most promising locations for an Indian restaurant, according to the client's criteria.
+
+In the third and final step, we use the frequency of different types of restaurants per city in order to cluster these cities into distinct groups (using k-means clustering). This allows us to build up a profile of each Irish city, and further narrow our recommendations of the ideal city location for an Indian restaurant. Further details are described in Section \ref{sec: clustering} below.
+
+The results of this analysis are summarised and discussed in Sections \ref{sec: results} and \ref{sec: discussion}.
+
+\subsection{Exploratory data analysis}\label{sec: EDA}
+%
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/asian_choropleth_dublin_inset".png}
+      \caption{The percentage of Asian residents by administrative county, with the 13 most populous cities shown as blue circles.}
+      \label{fig: ethnicity choropleth}
+\end{figure}
+%
+As a first step, we matched county-level ethnicity data to the locations of the 13 Irish cities in this analysis, using the county boundaries and the geographic python package `Shapely'. This allows us to visualise both the city locations and the proportion of Asian (non-Chinese) residents per county, as a choropleth map shown in Figure \ref{fig: ethnicity choropleth}. From this map, it's clear that the highest percentage of Asian residents are located around Dublin city, shown in dark red. This is coloured relative to other counties, of course; the actual percentages (2.5-3.5\%) are quite low. 
+%
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/cities_by_asian_percent_barchart".png}
+      \caption{The 13 most populous cities, ranked by the percentage of Asian residents within their administrative county.}
+      \label{fig:city by ethnicity}
+\end{figure}
+%
+
+When we only consider the counties where our 13 cities are located, \textbf{Swords, Dublin, Galway, Cork, and Limerick have the top five highest percentages of Asian residents}, as shown in Figure \ref{fig:city by ethnicity}. As an initial recommendation, ignoring the restaurant data, these five cities are strong contenders for a new Indian restaurant location, as they satisfy both criteria of a high urban population and a high proportion of Asian residents.
+
+Restaurant data for each city comes from the Foursquare API, as described in Section \ref{sec: restaurant data}. This data includes the frequency, location, and type (category) of restaurants within 1.5 kilometres of each city centre. Food venues that are not restaurants (e.g. fast food and cafe) are filtered out as they are not direct competitors to a new Indian restaurant. The category of restaurants will be used to cluster and profile each city in the next section, but first we explore some basic trends in the data.
+%
+%% SWAP instead with a stacked plot showing total restaurants and percentage of indians?
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/cities_percent_indian_restaurants_barchart".png}
+      \caption{The 13 most populous cities, ranked by the percentage of Indian restaurants within 1.5 kilometres of their city centres.}
+      \label{fig:city by indian restaurant}
+\end{figure}
+%
+The total number of top restaurants per city is shown in Figure \ref{fig:restaurants}. These numbers do not represent the total number of all restaurants in any city, especially for a larger city such as Dublin where many restaurants exist outside the 1.5 kilometre city centre radius. However, because they are ranked by popularity (according to Foursquare), and because only the most popular restaurants within a given radius are returned, this data can be considered representative of the restaurant competition that our client will face in each city. 
+
+As a next step, let's consider the percentage of Indian restaurants in each city, as this represents the direct competition for our client's cuisine and customer market. Figure \ref{fig:city by indian restaurant} ranks the 13 cities by the percentage of Indian restaurants within 1.5 kilometres of their city centres. Our client hopes to identify a gap in the Indian restaurant market, so lower percentages of Indian restaurants are more favourable. Ennis has no Indian restaurants, but this is perhaps unsurprising given that it has only 3 restaurants in total. However \textbf{Cork, Limerick, and Dublin also have very few Indian restaurants and they are much larger cities}. These are potential good candidates for a new Indian restaurant.
+
+On the opposite end of the spectrum, Bray has the largest percentage of Indian restaurants, at 25\%. However this should be taken with a pinch of salt given that Bray has only 4 restaurants in total.
+%
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/percentage_asian_vs_indian_restaurants_scatterplot".png}
+      \caption{The 13 most populous cities, ranked by their percentage of Asian residents and Indian restaurants. Cities that match the client's criteria are highlighted in the dashed box.}
+      \label{fig:city asian and indian}
+\end{figure}
+%
+Now let's combine the data on Asian residents and the percentage of Indian restaurants in order to identify the cities that have a high proportion of Asian residents and low proportion of Indian restaurants. Figure \ref{fig:city asian and indian} plots the 13 cities by their percentage of Asian residents and Indian restaurants. The data is divided into quarters of the 2D plane of Indian restaurants versus Asian population, and the cities within the quarter that represents a high proportion of Asian residents for a low proportion of Indian restaurants are highlighted in the red dashed box. We now begin to have \textbf{a shortlist of cities that meets the client's criteria for a relatively high population of Asian residents, and relatively low proportion of Indian restaurants}. These cities are (by decreasing proportion of Asian residents):
+%
+\begin{itemize}
+	\item Swords	
+	\item Dublin
+	\item Galway
+	\item Cork
+\end{itemize}
+%
+While this shortlist is certainly indicative, we are still lacking knowledge of the restaurant profile of each city, in order to determine what type of restaurants are most popular and successful. This is achieved by clustering the cities according to their restaurants, as described in the next section.
+
+\subsection{City clustering by restaurants}\label{sec: clustering}
+In order to get a better sense of the restaurant environment of each city, we can compute the frequency of each type of restaurant in a city (e.g. Chinese, Indian, Italian, Burger restaurants), and use a clustering algorithm to group similar cities together. 
+
+Clustering algorithms are a type of unsupervised machine learning, where the data in unlabelled, and the algorithm groups data points based on their similarity, or proximity, to other data points. It can work across many features (dimensions), and helps provide insight into data that is otherwise difficult to visualise or categorise. The final labels for each cluster require manual inspection for trends and similarities.
+
+For each of the 13 most populous cities, we have the frequencies of 30 different types of restaurants, from `American' to `Vietnamese' restaurants. This unlabelled, high-dimension data is ideal for a clustering algorithm to group similar restaurant environments together and build up a profile of each city for our client. However, as shown in Figure \ref{fig:restaurants}, there is a big range in the total number of restaurants per city, and in order to profile cities appropriately, we should have minimum number of features, and hence a minimum number of restaurants, per city. As a result, for the clustering analysis, we drop the cities with less than 5 restaurants (i.e. Bray and Ennis), leaving 11 cities for clustering. The five most common types of restaurants for each of these 11 cities are shown in Figure \ref{fig:5 common restaurants}.
+%
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/cities_table_types_restaurants".png}
+      \caption{The top five most common types of restaurants for the 13 most populous Irish cities.}
+      \label{fig:5 common restaurants}
+\end{figure}
+%
+
+K-means is a simple clustering algorithm which groups data according to a pre-set number of clusters (k), and minimises the total sum of squared distances from each data point to the cluster centre. In this analysis, we use the K-means algorithm\footnote{\url{https://scikit-learn.org/stable/modules/clustering.html}} from the python `scikit-learn' package, and cycle through a range of k values in order to determine the most appropriate number of clusters. This is done by plotting a measure of cluster density (`inertia') against k, and selecting the k value where the graph `bends' (known as the elbow-method). We use the `full' algorithm and the `k-means++' method to initialise our cluster centres.
+
+Using this approach, we clustered the 11 cities by their frequencies of restaurant types, and determined that 4 clusters was the most appropriate grouping (due to a subtle but distinct bend in the slope of cluster inertia at k=4). After inspecting the cities and types of restaurants in each cluster, distinct trends make it possible to give these clusters profile descriptions as shown in Table \ref{tab:clusters}.  %TODO fix reference to table and include caption?
+%
+% TODO make table better
+\begin{table}[]
+\label{tab:clusters}
+\centering
+\begin{tabular}{p{1cm}p{1.5cm}p{3.2cm}p{4.6cm}}
+\toprule
+Cluster & Number of cities & Cities & Profile description \\ \midrule
+1 & 3 & Carlow, Navan, Dundalk & Mid-size cities, popular Chinese-Asian restaurants \\ \midrule
+2 & 6 & Dublin, Cork, Galway, Limerick, Waterford, Kilkenny & Larger cities, popular generic `restaurants' \\ \midrule
+3 & 1 & Swords & Swords, popular Italian restaurants \\ \midrule
+4 & 1 & Drogheda & Drogheda, popular generic and Mediterranean restaurants \\ \bottomrule
+\end{tabular}%
+\end{table}
+%
+The 11 cities, coloured by cluster type, are mapped in Figure \ref{fig:city clusters}. 
+%
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/map_city_restaurant_clusters".png}
+      \caption{11 cities, clustered by frequency of restaurant type, and coloured by cluster label (1-4).}
+      \label{fig:city clusters}
+\end{figure}
+%
+These clusters make some sense. The majority of cities (6) have larger populations with popular generic `restaurants'. Three cities, shown in dark green in Figure \ref{fig:city clusters} are smaller cities located in the rural areas around Dublin with fewer restaurants and popular Chinese-Asian restaurants (perhaps the takeaway market). The final two clusters contain one city each. Swords is unique for its prevalence of Italian restaurants and Drogheda has a prevalence of both generic and Mediterranean restaurants. Both are located just north of Dublin.
+
+These cluster profiles, combined with our previous analysis of city ethnicity and prevalence of Indian restaurants, allow us to recommend with some certainty the top Irish cities for a new Indian restaurant. This final result is described and discussed in the next section.
 
 %%%%%%%%%%%%%%%%%%%% 
-\section{Methodology}
+\section{Results}\label{sec: results}
 %%%%%%%%%%%%%%%%%%%% 
-
-%%% add images and text
-
-%%%%%%%%%%%%%%%%%%%% 
-\section{Results}
-%%%%%%%%%%%%%%%%%%%% 
-
-The above map summarises the result of all our analysis. 
-It shows a choropleth of the administrative counties of Ireland, coloured by the percentage of Asian (non-Chinese) residents in that county. The highest percentages are around Dublin city, shown in dark red.
-It also shows the final 11 cities included for analysis (those with 5 or more top restaurants) as coloured circles, where the size of the circle indicates the percentage of Indian restaurants in that city, and the colour of the circle indicates which cluster the city belongs to, based on the types of restaurants that are most common.
-
+%
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=\linewidth]{"images/final_cluster_map_inset".png}
+      \caption{Choropleth of the percentage of Asian per administrative county. 11 cities are coloured by restaurant cluster and the size of the city circle indicates the percentage of Indian restaurants.}
+      \label{fig:final cluster map}
+\end{figure}
+%
+Figure \ref{fig:final cluster map} summarises the result of our analysis and clustering. It shows a choropleth of the administrative counties of Ireland, coloured by the percentage of Asian (non-Chinese) residents in that county. It also shows the final 11 cities included for analysis (those with 5 or more top restaurants) as coloured circles, where the size of the circle indicates the percentage of Indian restaurants in that city, and the colour of the circle indicates which cluster the city belongs to, based on the types of restaurants that are most common. An interactive version of this map is available online through the jupyter notebook on the project's Github repository\footnote{\url{https://github.com/tamelamaciel/capstone-IBM-Data-Science}}. %todo make map available as a page?
 By hovering over each city, additional statistics are available about the cluster profile, the percentage of Asian residents and the percentage of Indian restaurants.
 
 The cluster profiles combined with knowledge of the proportion of Asian residents in each city allows us to clearly identify those with a lack of current Indian restaurants but a relatively high Asian population. 
@@ -164,12 +285,12 @@ The cluster profiles combined with knowledge of the proportion of Asian resident
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%% 
-\section{Discussion}
+\section{Discussion}\label{sec: discussion}
 %%%%%%%%%%%%%%%%%%%% 
 
 %%%More detail about what we have done, and potential pitfalls (range of restaurant data, low stats implying high percentage of Indians in the smaller cities), not a clear elbow for clusters.
 
-%%%discuss profiles of each cluster 
+%%%discuss profiles of each cluster ?
 
 The result of all of this analysis leads to three clear top recommendations for where to locate a new Indian restaurant: Dublin, Swords, and Cork. There were two strong runners-up: Galway and Limerick
 
