@@ -25,10 +25,10 @@ Guided by these criteria, this notebook analyses a combination of census and ven
 
 **Python libraries**
 
-Pandas, Numpy, BeautifulSoup
-Shapely, Geopy
-KMeans from Sklearn.cluster
-Folium, Matplotlib, Seaborn
+Pandas, Numpy, BeautifulSoup  
+Shapely, Geopy  
+KMeans from Sklearn.cluster  
+Folium, Matplotlib, Seaborn  
 
 **Key plots**
 
